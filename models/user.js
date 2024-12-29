@@ -59,7 +59,7 @@ UserSchema.pre('save',async function(next){
     const user = this;
     if(!user.isModified('password')) return next();
     try{
-        const salt =await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(user.password,salt);
         user.password = hash;
         next();
@@ -69,7 +69,14 @@ UserSchema.pre('save',async function(next){
         return next(err);
     }
 })
+UserSchema.methods.comparePassword = async function(candidatePassword){
+    try{
+        const isMatch = await bcrypt.compare(candidatePassword,this.password);
+        return isMatch;
+    }catch(err){
+        return err;
+    }
+}
 
-
-const User = mongoose.model('User',UserSchema);
+const User = mongoose.model('user',UserSchema);
 module.exports =User;

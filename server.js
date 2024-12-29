@@ -1,20 +1,26 @@
 const express =require('express');
 const app =express();
-const user =require('./models/user');
 const db = require('./db.connection');
 
 const bodyParser =require('body-parser');
 app.use(bodyParser.json()); // req.body
-const PORT = process.env.PORT || 3000;
+
+const passport = require('./Auth');
+
+app.use(passport.initialize());
+
+const localMiddleware = passport.authenticate('local',{session:false});
+
+app.get('/',localMiddleware,(req,res)=>{    
+    res.send('welcome to our hotel hihihiihihihi');
+});
+
 
 const userRoutes=require('./routes/userRoutes');
 app.use('/voters',userRoutes);
 
-app.get('/',(req,res)=>{
-    res.send("Hello Word");
-});
 
 
-app.listen(PORT,()=>{
+app.listen(3000,()=>{
     console.log("server bangya");
 })
